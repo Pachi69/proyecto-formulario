@@ -1,0 +1,225 @@
+openapi: 3.0.3
+info:
+  title: API - Formulario de ISP
+  version: 1.0.1
+  description: Endpoints accesibles para el rol de usuario y administrador.
+servers:
+  - url: https://api.formulario.com
+paths:
+  /formulario:
+    post:
+      summary: Envia un formulario completado como json
+      tags:
+        - Formulario
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FormularioSolicitud'
+      responses:
+        '204':
+          description: Formulario enviado correctamente
+        '400':
+          description: Formato incorrecto
+  /formulario/{userEmail}/adjunto:
+    post:
+      summary: Envio de adjuntos jpg/png hacia el almacenamiento de documentos.
+      tags:
+        - Formulario
+      parameters:
+        - name: userEmail
+          in: path
+          required: true
+          description: email del usuario
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                imagen:
+                  type: string
+                  format: binary
+            encoding:
+              imagen:
+                contentType: image/jpeg, image/png
+      responses:
+        '200':
+          description: Archivo subido correctamente
+        '400':
+          description: Tipo de imagen no soportado
+        '404':
+          description: Usuario no encontrado
+
+  /formulario/usuario/{userEmail}:
+    get:
+      summary: Consulta el estado del tramite de un usuario
+      tags:
+        - Formulario
+      parameters:
+        - name: userEmail
+          in: path
+          required: true
+          description: Email del usuario
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Tramite encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Formulario'
+        '404':
+          description: Tramite no encontrado 
+
+
+  /admin/formularios:
+    get:
+      summary: Obtener formularios, con filtro opcional por estado
+      tags:
+        - Admin
+      parameters:
+        - name: estado
+          in: query
+          required: false
+          description: Filtra los formularios por estado
+          schema:
+            type: string
+            enum:
+              - Pendiente
+              - Aceptado
+              - Rechazado
+      responses:
+        '200':
+          description: Lista de formularios
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Formulario'
+        '204':
+          description: No hay formularios que coincidan
+        '404':
+          description: Lista no encontrada
+
+  /admin/formulario/{id}:
+    get:
+      summary: Obtener un formulario por Id
+      tags:
+       - Admin
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del formulario
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Formulario encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Formulario'
+        '404':
+          description: Formulario no encontrado
+
+  /admin/formulario/{id}/aprobar:
+    post:
+      summary: Aprueba un formulario
+      tags:
+        - Admin
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: id del formulario
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FormularioAprobacion'
+      responses:
+        '200':
+          description: Formulario aprobado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Formulario'
+        '400':
+          description: No se pudo aprobar el formulario
+
+components:
+  schemas:
+    Formulario:
+      type: object
+      properties:
+        id:
+          type: integer
+        nombre:
+          type: string
+        apellido:
+          type: string
+        dni:
+          type: string
+        telefono:
+          type: string
+        email:
+          type: string
+        dniImage:
+          type: string
+          format: uri
+        taxImage:
+          type: string
+          format: uri
+        tipo:
+          type: string
+          enum:
+            - Alta
+            - Baja
+        estado:
+          type: string
+          enum:
+            - Pendiente
+            - Aceptado
+            - Rechazado
+    FormularioAprobacion:
+      type: object
+      properties:
+        estado:
+          type: string
+          enum:
+            - Aceptado
+            - Rechazado
+    FormularioSolicitud:
+      type: object
+      properties:
+        nombre:
+          type: string
+        apellido:
+          type: string
+        dni:
+          type: string
+        telefono:
+          type: string
+        email: 
+          type: string
+        dniImage:
+          type: string
+          format: uri
+        taxImage:
+          type: string
+          format: uri
+        tipo:
+          type: string
+          enum:
+            - Alta
+            - Baja

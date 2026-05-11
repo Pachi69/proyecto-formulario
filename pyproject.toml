@@ -1,0 +1,53 @@
+# Metadatos del paquete y dependencias necesarias para correr la API.
+
+[project]
+name = "proyecto-formulario"
+version = "0.1.0"
+description = "API de Formulario ISP"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]", 
+    "python-multipart", # necesario para subir archivos en /adjunto
+    "pydantic[email]", # habilita validacion de EmailStr
+]
+
+# Dependencias extra que solo se instalan con pip install -e ".[test]".
+# Sirven para correr los tests.
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "pytest-cov",
+    "pytest-mock",
+    "httpx",
+    "schemathesis",
+]
+
+# Le dice a pip que herramienta usar para construir el paquete (setuptools).
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+
+# Que carpetas son parte del paquete. Incluye app/ y excluye tests/, .venv/, etc.
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+
+# Configuracion de pytest: dice donde encuentra los tests y que flags usa por defecto.
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --cov=app --cov-report=term-missing --cov-report=html"
+
+# --cov=app: mide cobertura sobre app/.
+# term-missing: imprime líneas no cubiertas en consola.
+# html: genera reporte navegable en htmlcov/index.html
+
+# Configuracion de cobertura: dice que paquete mide y que archivos ignora.
+
+[tool.coverage.run]
+source = ["app"]
+omit = ["app/main.py"]

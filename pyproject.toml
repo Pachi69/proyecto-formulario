@@ -10,6 +10,10 @@ dependencies = [
     "uvicorn[standard]", 
     "python-multipart", # necesario para subir archivos en /adjunto
     "pydantic[email]", # habilita validacion de EmailStr
+    "pydantic-settings",
+    "sqlalchemy",
+    "psycopg2-binary",
+    "python-dotenv",
 ]
 
 # Dependencias extra que solo se instalan con pip install -e ".[test]".

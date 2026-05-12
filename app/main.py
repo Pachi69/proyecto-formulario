@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from app.routers import formulario
+from app.routers import form
 
 
 app = FastAPI(
@@ -9,4 +9,4 @@ app = FastAPI(
     description="Endpoints accesibles para el rol de usuario y administrador.",
 )
 
-app.include_router(formulario.router)
+app.include_router(form.router)

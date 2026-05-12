@@ -1,31 +1,35 @@
 openapi: 3.0.3
+
 info:
-  title: API - Formulario de ISP
+  title: API - ISP Form
   version: 1.0.1
   description: Endpoints accesibles para el rol de usuario y administrador.
+
 servers:
-  - url: https://api.formulario.com
+  - url: https://api.form.com
+
 paths:
-  /formulario:
+  /forms:
     post:
       summary: Envia un formulario completado como json
       tags:
-        - Formulario
+        - Forms
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/FormularioSolicitud'
+              $ref: '#/components/schemas/FormRequest'
       responses:
         '204':
           description: Formulario enviado correctamente
         '400':
           description: Formato incorrecto
-  /formulario/{userEmail}/adjunto:
+
+  /forms/{userEmail}/attachment:
     post:
       summary: Envio de adjuntos jpg/png hacia el almacenamiento de documentos.
       tags:
-        - Formulario
+        - Forms
       parameters:
         - name: userEmail
           in: path
@@ -40,11 +44,11 @@ paths:
             schema:
               type: object
               properties:
-                imagen:
+                image:
                   type: string
                   format: binary
             encoding:
-              imagen:
+              image:
                 contentType: image/jpeg, image/png
       responses:
         '200':
@@ -54,11 +58,11 @@ paths:
         '404':
           description: Usuario no encontrado
 
-  /formulario/usuario/{userEmail}:
+  /forms/user/{userEmail}:
     get:
       summary: Consulta el estado del tramite de un usuario
       tags:
-        - Formulario
+        - Forms
       parameters:
         - name: userEmail
           in: path
@@ -72,27 +76,26 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Formulario'
+                $ref: '#/components/schemas/Form'
         '404':
-          description: Tramite no encontrado 
+          description: Tramite no encontrado
 
-
-  /admin/formularios:
+  /admin/forms:
     get:
       summary: Obtener formularios, con filtro opcional por estado
       tags:
         - Admin
       parameters:
-        - name: estado
+        - name: status
           in: query
           required: false
           description: Filtra los formularios por estado
           schema:
             type: string
             enum:
-              - Pendiente
-              - Aceptado
-              - Rechazado
+              - Pending
+              - Accepted
+              - Rejected
       responses:
         '200':
           description: Lista de formularios
@@ -101,17 +104,17 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Formulario'
+                  $ref: '#/components/schemas/Form'
         '204':
           description: No hay formularios que coincidan
         '404':
           description: Lista no encontrada
 
-  /admin/formulario/{id}:
+  /admin/forms/{id}:
     get:
       summary: Obtener un formulario por Id
       tags:
-       - Admin
+        - Admin
       parameters:
         - name: id
           in: path
@@ -125,11 +128,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Formulario'
+                $ref: '#/components/schemas/Form'
         '404':
           description: Formulario no encontrado
 
-  /admin/formulario/{id}/aprobar:
+  /admin/forms/{id}/approve:
     post:
       summary: Aprueba un formulario
       tags:
@@ -146,80 +149,100 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/FormularioAprobacion'
+              $ref: '#/components/schemas/FormApproval'
       responses:
         '200':
           description: Formulario aprobado
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Formulario'
+                $ref: '#/components/schemas/Form'
         '400':
           description: No se pudo aprobar el formulario
 
 components:
   schemas:
-    Formulario:
+
+    Form:
       type: object
       properties:
         id:
           type: integer
-        nombre:
+
+        first_name:
           type: string
-        apellido:
+
+        last_name:
           type: string
+
         dni:
           type: string
-        telefono:
+
+        phone:
           type: string
+
         email:
           type: string
-        dniImage:
+
+        dni_image:
           type: string
           format: uri
-        taxImage:
+
+        tax_image:
           type: string
           format: uri
-        tipo:
+
+        type:
           type: string
           enum:
-            - Alta
-            - Baja
-        estado:
+            - Register
+            - Unregister
+
+        status:
           type: string
           enum:
-            - Pendiente
-            - Aceptado
-            - Rechazado
-    FormularioAprobacion:
+            - Pending
+            - Accepted
+            - Rejected
+
+    FormApproval:
       type: object
       properties:
-        estado:
+        status:
           type: string
           enum:
-            - Aceptado
-            - Rechazado
-    FormularioSolicitud:
+            - Accepted
+            - Rejected
+
+    FormRequest:
       type: object
       properties:
-        nombre:
+
+        first_name:
           type: string
-        apellido:
+
+        last_name:
           type: string
+
         dni:
           type: string
-        telefono:
+
+        phone:
           type: string
-        email: 
+
+        email:
           type: string
-        dniImage:
+
+        dni_image:
           type: string
           format: uri
-        taxImage:
+
+        tax_image:
           type: string
           format: uri
-        tipo:
+
+        type:
           type: string
           enum:
-            - Alta
-            - Baja
+            - Register
+            - Unregister

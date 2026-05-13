@@ -12,7 +12,7 @@ dependencies = [
     "pydantic[email]", # habilita validacion de EmailStr
     "pydantic-settings",
     "sqlalchemy",
-    "psycopg2-binary",
+    "psycopg[binary]",
     "python-dotenv",
 ]
 

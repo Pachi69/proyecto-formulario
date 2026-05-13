@@ -21,8 +21,14 @@ class FormRepository:
         return self.db.query(FormModel).filter(FormModel.id == form_id).first()
     
     def get_by_email(self, email: str) -> FormModel | None:
-        return self.db.query(FormModel).filter(FormModel.email == email).first()
+        return self.db.query(FormModel).filter(FormModel.email == email).order_by(FormModel.created_at.desc()).first()
     
+    def get_all_by_status(self, status: str) -> list[FormModel]:
+        return self.db.query(FormModel).filter(FormModel.status == status).all()
+    
+    def get_all(self) -> list[FormModel] | None:
+        return self.db.query(FormModel).all()
+        
     def list(self) -> list[FormModel]:
         return self.db.query(FormModel).all()
     

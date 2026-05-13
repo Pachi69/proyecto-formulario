@@ -25,18 +25,11 @@ paths:
         '400':
           description: Formato incorrecto
 
-  /forms/{userEmail}/attachment:
+  /forms/attachment:
     post:
       summary: Envio de adjuntos jpg/png hacia el almacenamiento de documentos.
       tags:
         - Forms
-      parameters:
-        - name: userEmail
-          in: path
-          required: true
-          description: email del usuario
-          schema:
-            type: string
       requestBody:
         required: true
         content:
@@ -55,8 +48,6 @@ paths:
           description: Archivo subido correctamente
         '400':
           description: Tipo de imagen no soportado
-        '404':
-          description: Usuario no encontrado
 
   /forms/user/{userEmail}:
     get:
@@ -133,7 +124,7 @@ paths:
           description: Formulario no encontrado
 
   /admin/forms/{id}/approve:
-    post:
+    patch:
       summary: Aprueba un formulario
       tags:
         - Admin
@@ -159,6 +150,8 @@ paths:
                 $ref: '#/components/schemas/Form'
         '400':
           description: No se pudo aprobar el formulario
+        '404':
+          description: Formulario no encontrado
 
 components:
   schemas:

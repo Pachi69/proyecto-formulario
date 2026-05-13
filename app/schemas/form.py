@@ -1,5 +1,5 @@
 from datetime import datetime
-from pydantic import BaseModel, ConfigDict, EmailStr, AnyUrl
+from pydantic import BaseModel, ConfigDict, EmailStr
 from app.models.enum import FormType, Status
 
 
@@ -9,8 +9,8 @@ class FormRequest(BaseModel):
     dni: str
     phone: str
     email: EmailStr
-    dniImage: AnyUrl
-    taxImage: AnyUrl
+    dniImage: str
+    taxImage: str
     form_type: FormType
 
 
@@ -23,8 +23,8 @@ class FormResponse(BaseModel):
     dni: str
     phone: str
     email: EmailStr
-    dniImage: AnyUrl
-    taxImage: AnyUrl
+    dniImage: str
+    taxImage: str
     status: Status
     form_type: FormType
     created_at: datetime

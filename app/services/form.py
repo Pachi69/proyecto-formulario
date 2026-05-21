@@ -1,14 +1,16 @@
+from fastapi import HTTPException, status
 from app.models.form import FormModel
 from app.repositories.form import FormRepository
 from app.schemas.form import FormRequest, FormApproval
+from app.models.enum import Status as EnumStatus
 
 from app.storage.fake_storage import FakeStorage
 
 
-def create_form(
-        form_data: FormRequest,
-        repo: FormRepository
-) -> FormModel:
+def create_form(form_data: FormRequest, repo: FormRepository) -> FormModel:
+    existing = repo.get_by_email(form_data.email)
+    if existing and existing.status == EnumStatus.PENDING:
+        raise HTTPException( status_code=status.HTTP_400_BAD_REQUEST, detail="El usuario ya tiene un formulario activo")
     
     return repo.create(form_data)
 
@@ -29,5 +31,11 @@ def get_all(repo: FormRepository) -> list[FormModel] | None:
 def upload_attachment(file, storage: FakeStorage) -> str:
     return storage.upload_file(file)
 
-def update_status(form_id: int, approval: FormApproval, repo: FormRepository) -> FormModel | None:
-    return repo.update_status(form_id, approval)
+def update_status(form_id: int, approval: FormApproval, repo: FormRepository) -> FormModel:
+    form = repo.get(form_id)
+    if form is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Formulario no encontrado")
+    if form.status != EnumStatus.PENDING:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Solo se pueden modificar formularios pendientes")
+    
+    return repo.update_status(form, approval)

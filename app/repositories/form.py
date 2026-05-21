@@ -32,16 +32,10 @@ class FormRepository:
     def list(self) -> list[FormModel]:
         return self.db.query(FormModel).all()
     
-    def update_status(self, form_id: int, approval: FormApproval) -> FormModel | None:
-        form = self.get(form_id)
-
-        if form is None:
-            return None
-       
+    def update_status(self, form: FormModel, approval: FormApproval) -> FormModel:
         form.status = approval.status
         self.db.commit()
         self.db.refresh(form)
-
         return form
         
        

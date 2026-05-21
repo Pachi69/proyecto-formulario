@@ -29,15 +29,15 @@ def get_form_by_email(userEmail: str, db: Session = Depends(get_db)) -> FormMode
     return response
 
 @router.post("/form/attachment", status_code=status.HTTP_200_OK)
-def upload_file(file: UploadFile = File(...), storage = Depends(get_storage)) -> str:
+def upload_file(image: UploadFile = File(...), storage = Depends(get_storage)) -> str:
     
     allowed_types = ["image/jpeg", "image/png"]
     
-    if file.content_type not in allowed_types:
+    if image.content_type not in allowed_types:
         raise HTTPException(
             status_code=400,
             detail="Solo se permiten archivos JPEG, PNG"
         )
     
-    response = service.upload_attachment(file, storage)
+    response = service.upload_attachment(image, storage)
     return response

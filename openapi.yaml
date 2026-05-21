@@ -9,7 +9,7 @@ servers:
   - url: https://api.form.com
 
 paths:
-  /forms:
+  /form:
     post:
       summary: Envia un formulario completado como json
       tags:
@@ -25,7 +25,7 @@ paths:
         '400':
           description: Formato incorrecto
 
-  /forms/attachment:
+  /form/attachment:
     post:
       summary: Envio de adjuntos jpg/png hacia el almacenamiento de documentos.
       tags:
@@ -49,7 +49,7 @@ paths:
         '400':
           description: Tipo de imagen no soportado
 
-  /forms/user/{userEmail}:
+  /form/user/{userEmail}:
     get:
       summary: Consulta el estado del tramite de un usuario
       tags:
@@ -77,7 +77,7 @@ paths:
       tags:
         - Admin
       parameters:
-        - name: status
+        - name: status_filter
           in: query
           required: false
           description: Filtra los formularios por estado
@@ -162,7 +162,7 @@ components:
         id:
           type: integer
 
-        first_name:
+        name:
           type: string
 
         last_name:
@@ -177,15 +177,15 @@ components:
         email:
           type: string
 
-        dni_image:
+        dniImage:
           type: string
           format: uri
 
-        tax_image:
+        taxImage:
           type: string
           format: uri
 
-        type:
+        form_type:
           type: string
           enum:
             - Register
@@ -211,7 +211,7 @@ components:
       type: object
       properties:
 
-        first_name:
+        name:
           type: string
 
         last_name:
@@ -226,15 +226,15 @@ components:
         email:
           type: string
 
-        dni_image:
+        dniImage:
           type: string
           format: uri
 
-        tax_image:
+        taxImage:
           type: string
           format: uri
 
-        type:
+        form_type:
           type: string
           enum:
             - Register

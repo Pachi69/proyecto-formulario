@@ -2,7 +2,8 @@
 
 class TestForm:
     
-    def test_create_204(self, client, valid_form_request):
+    def test_create_204(self, client, valid_form_request, mocker):
+        mocker.patch("app.routers.form.services.create_form")
         response = client.post("/form", json=valid_form_request)
         assert response.status_code == 204
     
@@ -25,7 +26,7 @@ class TestForm:
 
     def test_upload_file_200(self, client):
         file = {
-            "file": ("file.jpg", b"file content", "image/jpeg")
+            "image": ("file.jpg", b"file content", "image/jpeg")
         }
 
         response = client.post("/form/attachment", files=file)
@@ -34,7 +35,7 @@ class TestForm:
     
     def test_upload_file_400(self, client):
         file = {
-            "file": ("file.jpg", b"file content", "image/gif")
+            "image": ("file.jpg", b"file content", "image/gif")
         }
 
         response = client.post("/form/attachment", files=file)

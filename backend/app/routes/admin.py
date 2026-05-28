@@ -38,6 +38,7 @@ def get_all(status_filter: Status | None = None, db: Session = Depends(get_db)) 
 
 @router.patch("/forms/{id}/approve", status_code=status.HTTP_200_OK, response_model=FormResponse)
 def approve(id: int, approve: FormApproval, db: Session = Depends(get_db)) -> FormModel:
+    
     repo = FormRepository(db)
     response = service.update_status(id, approve, repo)
     if not response:

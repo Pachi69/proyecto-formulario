@@ -8,6 +8,7 @@ from app.storage.fake_storage import FakeStorage
 
 
 def create_form(form_data: FormRequest, repo: FormRepository) -> FormModel:
+    
     existing = repo.get_by_email(form_data.email)
     if existing and existing.status == EnumStatus.PENDING:
         raise HTTPException( status_code=status.HTTP_400_BAD_REQUEST, detail="El usuario ya tiene un formulario activo")
@@ -17,7 +18,6 @@ def create_form(form_data: FormRequest, repo: FormRepository) -> FormModel:
 
 def get_form_by_email(email: str, repo: FormRepository) -> FormModel | None:
     return repo.get_by_email(email)
-
 
 def get_by_id(id: int, repo: FormRepository) -> FormModel | None:
     return repo.get(id)
@@ -35,7 +35,7 @@ def update_status(form_id: int, approval: FormApproval, repo: FormRepository) ->
     form = repo.get(form_id)
     if form is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Formulario no encontrado")
-    if form.status != EnumStatus.PENDING:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Solo se pueden modificar formularios pendientes")
+    if approval.status != EnumStatus.ACCEPTED and approval.status != EnumStatus.REJECTED:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No se pudo aprobar el formulario")
     
     return repo.update_status(form, approval)

@@ -32,3 +32,40 @@ def mock_form():
         form_type=FormType.REGISTER,
         created_at=datetime.now(),
     )
+
+@pytest.fixture
+def mock_form_accepted():
+    return FormModel(
+        id=1,
+        name="Tupu",
+        last_name="Tamadre",
+        dni="12345678",
+        phone="1144556677",
+        email="tupu@tamadre.com",
+        dniImage="https://example.com/dni.jpg",
+        taxImage="https://example.com/tax.jpg",
+        status=EnumStatus.ACCEPTED,
+        form_type=FormType.REGISTER,
+        created_at=datetime.now(),
+    )
+
+@pytest.fixture
+def mock_form2():
+    return FormModel(
+        id=2,
+        name="Tupu",
+        last_name="Tamadre",
+        dni="12345678",
+        phone="1144556677",
+        email="tupu@tamadre2.com",
+        dniImage="https://example.com/dni.jpg",
+        taxImage="https://example.com/tax.jpg",
+        status=EnumStatus.PENDING,
+        form_type=FormType.REGISTER,
+        created_at=datetime.now(),
+    )
+
+
+@pytest.fixture
+def mock_fake_url():
+    return "https://fake-url.com/file.jpg"

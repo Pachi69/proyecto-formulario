@@ -22,6 +22,6 @@ jobs:
     - run: |
         python -m pip install --upgrade pip
         pip install pytest
-        if [ -f pyproject.toml ]; then pip install -e ".[test]"
+        if [ -f pyproject.toml ]; then pip install -e ".[test]"; fi
     - name: Run tests
       run: pytest

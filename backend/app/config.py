@@ -8,6 +8,6 @@ class Settings(BaseSettings):
     environment: str = "development"
     port: int = 8000
 
-    model_config = SettingsConfigDict(env_file="F:/Universidad/ACS/proyecto_formulario/backend/.env", extra="ignore")
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
 settings = Settings()

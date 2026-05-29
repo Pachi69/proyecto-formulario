@@ -24,4 +24,9 @@ jobs:
         pip install pytest
         if [ -f backend/pyproject.toml ]; then cd backend && pip install -e ".[test]"; fi
     - name: Run tests
+      env:
+        DATABASE_URL: ${{ vars.DATABASE_URL }}
+        DB_USER: ${{ vars.DB_USER }}
+        DB_PASSWORD: ${{ vars.DB_PASSWORD }}
+        DB_NAME: ${{ vars.DB_NAME }} 
       run: pytest

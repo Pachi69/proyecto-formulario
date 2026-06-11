@@ -1,0 +1,39 @@
+name: Deploy to prod and end-to-end test
+
+on:
+  push:
+    tags:
+      - "v*"
+
+job:
+  deploy-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy
+        run: |
+          echo "Despliegue iniciado para el tag: ${{ github.ref_name }}"
+          
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.14.x'
+
+      - name: Install dependencies
+        run: |
+          cd frontend
+          python -m pip install --upgrade pip
+          pip install -e .
+
+      - name: Run Katalon Selenium Tests
+        run: |
+          cd frontend
+          echo "Ejecutando test E2E..."
+          python -m unittest discover -s tests -p "*.py" -v
+        env:
+          BASE_URL: "https://um-2025-articulos.tiiny.site/"
+
+      

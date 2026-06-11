@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -8,11 +7,24 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import NoAlertPresentException
 import unittest, time, re
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.options import Options
 
 class TestArticleSearch(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.driver = webdriver.Chrome()
+        chrome_options = Options()
+        chrome_options.add_argument("--headless=new")
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--disable-dev-shm-usage")
+        chrome_options.add_argument("--disable-gpu")
+        
+        cls.driver = webdriver.Chrome(
+            service=Service(ChromeDriverManager().install()),
+            options=chrome_options
+        )
+        
         cls.driver.implicitly_wait(30)
         cls.base_url = "https://www.google.com/"
         cls.verificationErrors = []
@@ -80,7 +92,8 @@ class TestArticleSearch(unittest.TestCase):
             cls.driver.quit()
         except Exception:
             pass
-        cls().assertEqual([], cls.verificationErrors)
+        if cls.verificationErrors:
+            raise AssertionError("Hubo errores en las verificaciones: " + ", ".join(cls.verificationErrors))
 
 if __name__ == "__main__":
-    unittest.main()
+    unittest.main()   

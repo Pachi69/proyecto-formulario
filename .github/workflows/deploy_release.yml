@@ -5,7 +5,7 @@ on:
     tags:
       - "v*"
 
-job:
+jobs:
   deploy-and-test:
     runs-on: ubuntu-latest
 

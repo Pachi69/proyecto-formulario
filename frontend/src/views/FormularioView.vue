@@ -37,7 +37,9 @@ async function handleSubmit() {
     }
     formKey.value++
   } catch (err) {
-    if (err.response?.status === 400) {
+    if (err.response?.status === 409) {
+      error.value = 'Ya tenes un formulario pendiente'
+    } else if (err.response?.status === 400) {
       error.value = 'Formato incorrecto'
     } else {
       error.value = 'Error al enviar el formulario'

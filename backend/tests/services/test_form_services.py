@@ -11,11 +11,11 @@ class TestFormServices:
         result = service.create_form(valid_form_data, repo)
         assert result.status == EnumStatus.PENDING
 
-    def test_create_form_400(self, repo, valid_form_data):
+    def test_create_form_409(self, repo, valid_form_data):
         service.create_form(valid_form_data, repo)
         with pytest.raises(HTTPException) as exc:
             service.create_form(valid_form_data, repo)
-        assert exc.value.status_code == 400
+        assert exc.value.status_code == 409
 
     def test_get_form_by_email(self, repo, valid_form_data):
         service.create_form(valid_form_data, repo)

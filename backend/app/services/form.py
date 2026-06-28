@@ -11,7 +11,7 @@ def create_form(form_data: FormRequest, repo: FormRepository) -> FormModel:
     
     existing = repo.get_by_email(form_data.email)
     if existing and existing.status == EnumStatus.PENDING:
-        raise HTTPException( status_code=status.HTTP_400_BAD_REQUEST, detail="El usuario ya tiene un formulario activo")
+        raise HTTPException( status_code=status.HTTP_409_CONFLICT, detail="El usuario ya tiene un formulario activo")
     
     return repo.create(form_data)
 

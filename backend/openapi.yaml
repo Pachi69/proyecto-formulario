@@ -24,6 +24,8 @@ paths:
           description: Formulario enviado correctamente
         '400':
           description: Formato incorrecto
+        '409':
+          description: El usuario ya tiene un formulario activo
 
   /form/attachment:
     post:

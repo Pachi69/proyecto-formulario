@@ -1,9 +1,9 @@
 // Llamadas a la API del backend
 import axios from 'axios'
 
+
 export async function createForm(data) {
     const response = await axios.post('/form', data);
-    
     return response
 }
 

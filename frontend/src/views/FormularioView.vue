@@ -41,6 +41,8 @@ async function handleSubmit() {
       error.value = 'Ya tenes un formulario pendiente'
     } else if (err.response?.status === 400) {
       error.value = 'Formato incorrecto'
+    } else if (err.response?.status === 404) {
+      error.value = 'Ese cliente no existe'
     } else {
       error.value = 'Error al enviar el formulario'
     }
@@ -50,12 +52,23 @@ async function handleSubmit() {
 async function handleFile(event, field) {
   const file = event.target.files[0]
   if (!file) return
+
+  const allowedExtensions = ['image/jpeg', 'image/png']
+  if (!allowedExtensions.includes(file.type)) {
+    error.value = 'Formato de archivo no permitido'
+    event.target.value = ''
+    form.value[field] = ''
+    return
+  }
+
+  error.value = ''
   try {
     const response = await uploadFile(file)
     form.value[field] = response.data
   } catch (err) {
     error.value = 'Error al subir el archivo'
-    console.log(err)
+    event.target.value = ''
+    form.value[field] = ''
   }
 }
 

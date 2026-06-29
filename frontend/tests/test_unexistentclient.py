@@ -36,8 +36,9 @@ class AppDynamicsJob2(unittest.TestCase):
         driver.find_element(By.XPATH,"//div[@id='app']/div/div/div/form/div[2]/div/div[3]/div/input").send_keys("44462927")
         driver.find_element(By.XPATH,"//input[@type='tel']").clear()
         driver.find_element(By.XPATH,"//input[@type='tel']").send_keys("123456789")
+        email = f"test{int(time.time())}@test.com"
         driver.find_element(By.XPATH,"//input[@type='email']").clear()
-        driver.find_element(By.XPATH,"//input[@type='email']").send_keys("pachi@test.com")
+        driver.find_element(By.XPATH,"//input[@type='email']").send_keys(email)
         file_inputs = driver.find_elements(By.XPATH, "//input[@type='file']")
         file_inputs[0].send_keys(os.path.join(BASE_DIR, "fixtures", "dni.png"))
         file_inputs[1].send_keys(os.path.join(BASE_DIR, "fixtures", "tax.png"))

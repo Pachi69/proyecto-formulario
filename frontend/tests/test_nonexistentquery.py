@@ -24,8 +24,9 @@ class AppDynamicsJob5(unittest.TestCase):
         driver = self.driver
         driver.get("https://proyecto-formulario-1.onrender.com/check")
         driver.find_element(By.XPATH,"//input[@type='email']").click()
+        email = f"test{int(time.time())}@test.com"
         driver.find_element(By.XPATH,"//input[@type='email']").clear()
-        driver.find_element(By.XPATH,"//input[@type='email']").send_keys("juan@perez2.com")
+        driver.find_element(By.XPATH,"//input[@type='email']").send_keys(email)
         driver.find_element(By.XPATH,"//div[@id='app']/div/div/div/div/div/button").click()
         try: self.assertTrue(self.is_element_present(By.XPATH, "//div[contains(text(),'No se encontro')]"))
         except AssertionError as e: self.verificationErrors.append(str(e))

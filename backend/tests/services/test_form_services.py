@@ -17,6 +17,12 @@ class TestFormServices:
             service.create_form(valid_form_data, repo)
         assert exc.value.status_code == 409
 
+    def test_create_form_unregister_404(self, repo, valid_form_data):
+        valid_form_data.form_type = "Unregister"
+        with pytest.raises(HTTPException) as exc:
+            service.create_form(valid_form_data, repo)
+        assert exc.value.status_code == 404
+
     def test_get_form_by_email(self, repo, valid_form_data):
         service.create_form(valid_form_data, repo)
         result = service.get_form_by_email(valid_form_data.email, repo)

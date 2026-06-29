@@ -1,10 +1,13 @@
 name: Deploy to prod and end-to-end test
 
 on:
-  push:
-    tags:
-      - "v*"
+  release:
+    types: [released]
 
+env:
+  BACKEND_SERVICE_ID: srv-d90n3ofavr4c738sg650
+  FRONTEND_SERVICE_ID: srv-d90n5qg0697c73ctjnh0
+  
 jobs:
   deploy-and-test:
     runs-on: ubuntu-latest
@@ -13,16 +16,47 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Deploy
+      - name: Deploy services and wait until live
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
         run: |
-          echo "Despliegue iniciado para el tag: ${{ github.ref_name }}"
+          deploy_and_wait () {
+            local service_id="$1"
+            echo "Disparando deploy de $service_id..."
+            local deploy_id
+            deploy_id=$(curl -s -X POST \
+              -H "Authorization: Bearer $RENDER_API_KEY" \
+              -H "Content-Type: application/json" \
+              "https://api.render.com/v1/services/$service_id/deploys" \
+              -d '{"clearCache":"do_not_clear"}' | jq -r '.id')
+            echo "Deploy id: $deploy_id"
+            for i in $(seq 1 60); do
+              local status
+              status=$(curl -s \
+                -H "Authorization: Bearer $RENDER_API_KEY" \
+                "https://api.render.com/v1/services/$service_id/deploys/$deploy_id" | jq -r '.status')
+              echo "  [$i] estado: $status"
+              case "$status" in
+                live) echo "  -> $service_id LIVE"; return 0 ;;
+                build_failed|update_failed|canceled|deactivated|pre_deploy_failed)
+                  echo "  -> Deploy fallido: $status"; return 1 ;;
+              esac
+              sleep 10
+            done
+            echo "  -> Timeout esperando $service_id"; return 1
+          }
+          deploy_and_wait "$BACKEND_SERVICE_ID"
+          deploy_and_wait "$FRONTEND_SERVICE_ID"
           
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.14.x'
+          
+      - name: Set up Firefox
+        uses: browser-actions/setup-firefox@v1
 
-      - name: Install dependencies
+      - name: Install E2E dependencies
         run: |
           cd frontend
           python -m pip install --upgrade pip
@@ -31,9 +65,6 @@ jobs:
       - name: Run Katalon Selenium Tests
         run: |
           cd frontend
-          echo "Ejecutando test E2E..."
-          python -m unittest discover -s tests -p "*.py" -v
-        env:
-          BASE_URL: "https://um-2025-articulos.tiiny.site/"
+          python -m unittest discover -s tests -p "test_*.py" -v
 
       
